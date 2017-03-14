@@ -10,8 +10,10 @@ class qtmosq : public QObject, public mosquittopp
 {
     Q_OBJECT
 
+    int logLevel;
+
 public:
-    qtmosq(const char *id = NULL, bool clean_session = true) : mosquittopp (id, clean_session) {MID = 0;}
+    qtmosq(const char *id = NULL, bool clean_session = true) : mosquittopp (id, clean_session), MID(0), logLevel(0) {}
     virtual ~qtmosq() {}
 
     void on_connect(int result) final
@@ -55,6 +57,15 @@ public:
 
     virtual void on_disconnect(int rc) final {
       emit disconnected(rc);
+    }
+
+    virtual void on_error() final {
+        emit messageReceived("error");
+    }
+
+    virtual void on_log(int level, const char *str) final {
+        if (level > logLevel)
+        emit messageReceived(str);
     }
 
     int* getMID() {return &MID;}

@@ -19,51 +19,37 @@ CONFIG += C++11
 #LIBS += -lmosquittopp
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    Subscribers.cpp \
-    guarded.cpp \
-    lr_guarded.cpp
+        mainwindow.cpp
 
 HEADERS  += mainwindow.h \
-    qtmosq.h \
-    Subscribers.h \
-    guarded.h \
-    lr_guarded.h
+    qtmosq.h
 
 FORMS    += mainwindow.ui
 
-PLF = /mnt/data/projects/P1/P1/Source/Common/PLF
+MOSQDIR = /home/master/projects/mosquitto.git/trunk
 
-INCLUDEPATH += $$PWD/../../Mosquitto/mosquitto.git/trunk/lib \
-               $$PWD/../../P1/P1/Source/Common/PLF/OS \
-               $$PWD/../../P1/P1/Source/Common/PLF/PLIB/Exception \
-#               $$PWD/../../P1/P1/Source/Common/PLF/PLIB/String \
-               $$PLF/PLIB/String \
-               /mnt/data/projects/P1/P1/Source/Common/PLF \
-               /mnt/data/projects/P1/P1/Source/Common/PLF/TDD \
-               /mnt/data/projects/P1/P1/Source/Common/PLF/PLIB/CuteUnitTest/cute_lib
-#    $$PWD/../../Mosquitto/mosquitto.git/trunk/lib/cpp
-
+INCLUDEPATH += $$MOSQDIR/lib \
+    $$MOSQDIR/lib/cpp
 
 
 # CPP
-unix:!macx: LIBS += -L$$PWD/../../Mosquitto/mosquitto.git/trunk/lib/cpp/ -lmosquittopp
+unix:!macx: LIBS += -L$$MOSQDIR/lib/cpp/ -lmosquittopp
 
-INCLUDEPATH += $$PWD/../../Mosquitto/mosquitto.git/trunk/lib/cpp
-DEPENDPATH += $$PWD/../../Mosquitto/mosquitto.git/trunk/lib/cpp
+INCLUDEPATH += $$MOSQDIR/lib/cpp
+DEPENDPATH += $$MOSQDIR/lib/cpp
 
-unix:!macx: PRE_TARGETDEPS += $$PWD/../../Mosquitto/mosquitto.git/trunk/lib/cpp/libmosquittopp.a
+unix:!macx: PRE_TARGETDEPS += $$MOSQDIR/lib/cpp/libmosquittopp.a
 
 
 # C
-unix:!macx: LIBS += -L$$PWD/../../Mosquitto/mosquitto.git/trunk/lib/ -lmosquitto
+unix:!macx: LIBS += -L$$MOSQDIR/lib/ -lmosquitto
 
-INCLUDEPATH += $$PWD/../../Mosquitto/mosquitto.git/trunk
-DEPENDPATH += $$PWD/../../Mosquitto/mosquitto.git/trunk
-INCLUDEPATH += $$PWD/../../Mosquitto/mosquitto.git/trunk/lib
-DEPENDPATH += $$PWD/../../Mosquitto/mosquitto.git/trunk/lib
+INCLUDEPATH += $$MOSQDIR
+DEPENDPATH += $$MOSQDIR
+INCLUDEPATH += $$MOSQDIR/lib
+DEPENDPATH += $$MOSQDIR/lib
 
-unix:!macx: PRE_TARGETDEPS += $$PWD/../../Mosquitto/mosquitto.git/trunk/lib/libmosquitto.a
+unix:!macx: PRE_TARGETDEPS += $$MOSQDIR/lib/libmosquitto.a
 
 
 LIBS += -lcares

@@ -23,14 +23,18 @@ private:
     Ui::MainWindow *ui;
 
 private slots:
-    void setMessageStatus(bool);
+    void setMessageStatus(bool on);
     void connectPressed();
     void sendPressed();
     void connectEnabled();
     void subscribePressed();
     void subscribed();
+    void unsubscribed();
     void connected();
+    void disconnected(int rc);
     void showMessage(QString);
+    void on_pushButton_released();
+    void on_Unsubscribe_released();
 };
 
 #endif // MAINWINDOW_H

@@ -12,9 +12,9 @@ class qtmosq : public QObject, public mosquittopp
 
 public:
     qtmosq(const char *id = NULL, bool clean_session = true) : mosquittopp (id, clean_session) {MID = 0;}
-    ~qtmosq() {}
+    virtual ~qtmosq() {}
 
-    void on_connect(int result)
+    void on_connect(int result) final
     {
         if (!result)
         {
@@ -24,18 +24,25 @@ public:
         else
             emit connectEnable();
     }
-    void on_publish(int id)
+
+    void on_publish(int /*id*/) final
     {
         MID++;
         emit messageSent(true);
     }
-    void on_subscribe(int mid, int qos_count, const int *granted_qos)
+
+    void on_subscribe(int mid, int qos_count, const int *granted_qos) final
     {
         if (MID != 0)
             emit subscribed();
         MID++;
     }
-    void on_message(const mosquitto_message *message)
+
+    void on_unsubscribe(int mid) final {
+      emit unsubscribed();
+    }
+
+    void on_message(const mosquitto_message *message) final
     {
         if (message->payloadlen)
         {
@@ -46,6 +53,10 @@ public:
         }
     }
 
+    virtual void on_disconnect(int rc) final {
+      emit disconnected(rc);
+    }
+
     int* getMID() {return &MID;}
 
 private:
@@ -53,10 +64,12 @@ private:
 
 signals:
     void connected();
+    void disconnected(int rc);
     void messageSent(bool);
     void messageReceived(QString);
     void connectEnable();
     void subscribed();
+    void unsubscribed();
 };
 
 #endif // QTMOSQ_H

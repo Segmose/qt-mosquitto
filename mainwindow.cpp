@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->subscribe->setDisabled(true);
     ui->topic->setDisabled(true);
 
-    ui->lineIP->setText(QString("10.10.10.130"));
+    ui->lineIP->setText(QString("127.0.0.1"));
     ui->linePort->setText(QString("1883"));
     ui->topic->setText(QString("debug"));
     ui->lineID->setText(QString("2222"));
@@ -64,13 +64,16 @@ void MainWindow::connectPressed()
     mosq->will_set(topic.data(), will.length(), will.data(), 0, true);
 
 
-    mosq->connect_async(host.data(), port);
+    int rc = mosq->connect_async(host.data(), port);
+    if (rc == MOSQ_ERR_ERRNO) {
+        QString txt = "Errno="+QString::number(errno);
+        showMessage(txt);
+    }
+
     if (mosq->loop_start() != MOSQ_ERR_SUCCESS)
       ui->message->setText("No loop");
     else
       ui->message->setText("loop");
-
-
 }
 
 void MainWindow::subscribePressed()
@@ -85,7 +88,8 @@ void MainWindow::subscribePressed()
 void MainWindow::sendPressed()
 {
     setMessageStatus(false);
-    QByteArray payload = QString("[" + ui->lineID->text() + "] " + ui->message->text()).toLocal8Bit();
+    //QByteArray payload = QString("[" + ui->lineID->text() + "] " + ui->message->text()).toLocal8Bit();
+    QByteArray payload = QString( ui->message->text()).toLocal8Bit();
     currentTopic = ui->topic->text();
     QByteArray topic = currentTopic.toLocal8Bit();
 
@@ -159,9 +163,9 @@ void MainWindow::on_pushButton_released()
   QByteArray payload = dd.toLocal8Bit();
   currentTopic = ui->topic->text();
   QByteArray topic = currentTopic.toLocal8Bit();
-  if (!subed.contains(currentTopic)) mosq->subscribe(mosq->getMID(), topic.data(), 2);
+  if (!subed.contains(currentTopic))
+      mosq->subscribe(mosq->getMID(), topic.data(), 2);
   mosq->publish(mosq->getMID(), topic.data(), payload.size(), payload.data(), 2, false);
-
 }
 
 void MainWindow::on_Unsubscribe_released()

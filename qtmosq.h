@@ -10,6 +10,7 @@ class qtmosq : public QObject, public mosquittopp
 {
     Q_OBJECT
 
+    int MID;
     int logLevel;
 
 public:
@@ -64,14 +65,13 @@ public:
     }
 
     virtual void on_log(int level, const char *str) final {
-        if (level > logLevel)
+        if (level >= logLevel)
         emit messageReceived(str);
     }
 
     int* getMID() {return &MID;}
 
 private:
-    int MID;
 
 signals:
     void connected();
